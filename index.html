@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>AI Time Machine – Fullscreen Aspect Lock</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;  
+      width: 100%;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #buttonOverlay {
+      position: absolute;
+      z-index: 9999;
+      text-align: center;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 18px;
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0284c7;
+    }
+
+    #unityFrame {
+      border: none;
+      background: black;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+
+    /* Aspect ratio container to keep the 16:9 ratio */
+    .frameContainer {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      padding-top: 56.25%; /* Aspect ratio of 16:9 */
+      overflow: hidden;
+    }
+
+    .frameContainer iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="buttonOverlay">
+    <button id="fullscreenBtn">Play Fullscreen</button>
+  </div>
+
+  <div class="frameContainer">
+    <iframe id="unityFrame" src="" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    const btn = document.getElementById('fullscreenBtn');
+    const frame = document.getElementById('unityFrame');
+    const overlay = document.getElementById('buttonOverlay');
+    const targetRatio = 16 / 9;
+
+    function resizeFullscreen() {
+      if (document.fullscreenElement === frame ||
+        document.webkitFullscreenElement === frame ||
+        document.msFullscreenElement === frame) {
+
+        let screenW = window.innerWidth;
+        let screenH = window.innerHeight;
+
+        let newW = screenW;
+        let newH = screenW / targetRatio;
+
+        if (newH > screenH) {
+          newH = screenH;
+          newW = screenH * targetRatio;
+        }
+
+        frame.style.width = `${newW}px`;
+        frame.style.height = `${newH}px`;
+        frame.style.margin = "auto";
+      } else {
+        // Normal mode: fill available space
+        frame.style.width = "100%";
+        frame.style.height = "100%";
+        frame.style.margin = "0";
+      }
+    }
+
+    btn.addEventListener('click', () => {
+      frame.src = "https://kalamsps.github.io/Neural_Network_Builder/"; // Your game URL
+      frame.style.display = 'block';
+      overlay.style.display = 'none';
+
+      if (frame.requestFullscreen) {
+        frame.requestFullscreen();
+      } else if (frame.webkitRequestFullscreen) {
+        frame.webkitRequestFullscreen();
+      } else if (frame.msRequestFullscreen) {
+        frame.msRequestFullscreen();
+      }
+    });
+
+    window.addEventListener('resize', resizeFullscreen);
+    document.addEventListener('fullscreenchange', resizeFullscreen);
+    document.addEventListener('webkitfullscreenchange', resizeFullscreen);
+    document.addEventListener('msfullscreenchange', resizeFullscreen);
+  </script>
+</body>
+
+</html>
